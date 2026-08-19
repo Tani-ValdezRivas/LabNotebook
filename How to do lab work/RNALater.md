@@ -1,0 +1,11 @@
+- Ensure that RNAlater is in a sterile container (DO NOT OPEN UNLESS IN BSC)
+- Get cryovials but do not open until they are in biosafety cabinet (BSC)
+- Get Falcon Tubes but do not open until they are in BSC
+- Put gloves on and spray bleach on them
+- Get rack and spray bleach on it
+- Spray bleach on BSC surface and wipe
+- Open cryovials and place cap flat side on the surface, place vials in rack
+- Open Falcon Tubes and place cap flat side on the surface, place tube in styrofoam 
+- UV light them (DO NOT OPEN BSC UNTIL FINISH)
+- Open RNAlater container in BSC and place it in Falcon Tube
+- Pipette in UV light cryovials
