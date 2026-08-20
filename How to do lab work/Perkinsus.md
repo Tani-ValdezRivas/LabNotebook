@@ -30,6 +30,7 @@ How to identify perkinsus under the microscope:
 - Thin borders  
 - Very circular and stains black
 	- May have a clear center with thin borders
+- When you have finer focus, center does not change
 
 Eggs tend to:
 - Stain brown 
