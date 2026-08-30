@@ -1,0 +1,1 @@
+After AG is done examining perkinsus prevalence and intensity, I can see how oyster size, temperature, and salinity affect perkinsus load
