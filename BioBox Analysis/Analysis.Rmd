@@ -1,0 +1,79 @@
+---
+title: "Biobox Analysis"
+output: html_document
+date: "2026-09-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Installing and Downloading Libraries
+install.packages("readr")
+library(readr)
+
+install.packages("tidyverse")
+library(tidyverse)
+
+install.packages("dplyr")
+library(dplyr)
+
+install.packages("lubridate")
+library(lubridate)
+
+
+# Setting Work Directory
+setwd("~")
+getwd()
+```
+
+
+```{r Open CSV files for Bivalve Heigh and Weight, Mobile and Sessile Fauna, and Rugosity}
+# Assignment of Names for .CSV files 
+BivalveHeight <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_retrieval _bivalve_height.csv", check.names = FALSE)
+BivalveWeight <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_retrieval_bivalve_weight.csv", check.names = FALSE)
+MobileFauna <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_retrieval_mobile_fauna.csv", check.names = FALSE)
+SessileFauna <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_retrieval_sessile_fauna.csv", check.names = FALSE)
+Rugosity <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_rugosity.csv", check.names = FALSE)
+```
+
+```{r Differences in Mobile Fauna Diversity}
+# Differences Between Sites, Regardless of Year & Increase in Replicates for 2026
+
+# Plot
+Site_Differences_Plot <- ggplot(data = MobileFauna, aes(x = reef_name, y = count_total, fill = scientific_name)) +
+  geom_col(position = "dodge") +
+  labs(title = "Total Species Found Between Each Site in 2025 & 2026",
+       x = "Site",
+       y = "Species Observed")
+Site_Differences_Plot
+
+# Data Standardized due to Increase in Replicates for 2026 Deployment
+
+# Pip Created
+Standardized_Site_Differences <- MobileFauna %>%
+  mutate(Year = year(mdy(date))) %>%
+  group_by(Year, scientific_name, reef_name) %>%
+  summarise(
+    mean_count_total = mean(count_total, na.rm = TRUE),
+    .groups = "drop"
+    ) %>%
+  group_by(reef_name, scientific_name) %>%
+  summarise(
+    standardized_abundance = mean(mean_count_total, na.rm = TRUE),
+    .groups = "drop"
+  )
+  
+# Plot
+Standardized_Site_Differences_Plot <- ggplot(data = Standardized_Site_Differences, aes(x = reef_name, y = standardized_abundance, fill = scientific_name)) +
+  geom_col(position = "dodge") +
+  labs(title = "Species Found Between Each Site in 2025 & 2026 (Standardized)",
+       x = "Site",
+       y = "Species Observed")
+Standardized_Site_Differences_Plot
+
+  
+
+
+
+```
+
