@@ -1,0 +1,3 @@
+- Ask again about stocking density
+- Tell her about the ideas that Dale had for keeping floating bag at the surface
+- December is when we will be going out
