@@ -20,6 +20,8 @@ library(dplyr)
 install.packages("lubridate")
 library(lubridate)
 
+install.packages("vegan")
+library(vegan)
 
 # Setting Work Directory
 setwd("~")
@@ -38,7 +40,6 @@ Rugosity <- read.csv("~/Documents/GitHub/PIC/Biobox/biobox_rugosity.csv", check.
 
 ```{r Differences in Mobile Fauna Diversity}
 # Differences Between Sites, Regardless of Year & Increase in Replicates for 2026
-
 # Plot
 Site_Differences_Plot <- ggplot(data = MobileFauna, aes(x = reef_name, y = count_total, fill = scientific_name)) +
   geom_col(position = "dodge") +
@@ -48,7 +49,6 @@ Site_Differences_Plot <- ggplot(data = MobileFauna, aes(x = reef_name, y = count
 Site_Differences_Plot
 
 # Data Standardized due to Increase in Replicates for 2026 Deployment
-
 # Pip Created
 Standardized_Site_Differences <- MobileFauna %>%
   mutate(Year = year(mdy(date))) %>%
@@ -62,7 +62,6 @@ Standardized_Site_Differences <- MobileFauna %>%
     standardized_abundance = mean(mean_count_total, na.rm = TRUE),
     .groups = "drop"
   )
-  
 # Plot
 Standardized_Site_Differences_Plot <- ggplot(data = Standardized_Site_Differences, aes(x = reef_name, y = standardized_abundance, fill = scientific_name)) +
   geom_col(position = "dodge") +
@@ -70,6 +69,8 @@ Standardized_Site_Differences_Plot <- ggplot(data = Standardized_Site_Difference
        x = "Site",
        y = "Species Observed")
 Standardized_Site_Differences_Plot
+
+# Looking at Shifts in Beta Diversity for each Site Between 2025 & 2026 using Bray-Curtis dissimilarity matrix and PERMANOVA
 
   
 
