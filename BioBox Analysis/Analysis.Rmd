@@ -70,11 +70,22 @@ Standardized_Site_Differences_Plot <- ggplot(data = Standardized_Site_Difference
        y = "Species Observed")
 Standardized_Site_Differences_Plot
 
+
+
+
+
+
+```
+```{r Examining Beta Diversity Between Years}
+
 # Looking at Shifts in Beta Diversity for each Site Between 2025 & 2026 using Bray-Curtis dissimilarity matrix and PERMANOVA
 
-  
-
-
-
+Standardized_Data <- MobileFauna %>%
+  mutate(Year = as.factor(year(mdy(date)))) %>%
+  group_by(Year, reef_name, scientific_name) %>%
+  summarise(
+    mean_abundance = mean(count_total, na.rm = TRUE), 
+    .groups = "drop"
+    )
 ```
 
