@@ -29,9 +29,6 @@ Chapter 2 – Sophie's experiment - doing RNA seq at oysters during winter and s
 Chapter 3 - Can we look at glycogen content related to the three farming practices in relation to flavor and quality of the oyster- and see if consumers prefer oysters with higher glycogen content 
 
 
-*** matt is teaching stats class in spring
-
-
 Conferences
 Benthic Ecology - Boston; March 14th - 17th
 NSA - Baltimore; March 21st - 25th

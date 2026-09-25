@@ -78,14 +78,187 @@ Standardized_Site_Differences_Plot
 ```
 ```{r Examining Beta Diversity Between Years}
 
-# Looking at Shifts in Beta Diversity for each Site Between 2025 & 2026 using Bray-Curtis dissimilarity matrix and PERMANOVA
+# Looking at Shifts in Beta Diversity for each Site Between 2025 & 2026 using Bray-Curtis dissimilarity matrix & Jaccard and PERMANOVA
 
-Standardized_Data <- MobileFauna %>%
+# Examining Shifts in each Reef
+
+# Creating a Pip to look at changes b/t reefs in 2025 & 2026
+Standardized_Site_Year <- MobileFauna %>%
   mutate(Year = as.factor(year(mdy(date)))) %>%
-  group_by(Year, reef_name, scientific_name) %>%
+  filter(Year %in% c("2025","2026")) %>%
+  group_by(Year, scientific_name, reef_name) %>%
   summarise(
-    mean_abundance = mean(count_total, na.rm = TRUE), 
-    .groups = "drop"
-    )
+    mean_count_total = mean(count_total, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(SampleID = paste(reef_name,Year,sep = "_"))
+
+# Need to create a community matrix 
+Community_Matrix <- Standardized_Site_Year %>%
+  select(SampleID, scientific_name, mean_count_total) %>%
+  pivot_wider(names_from = scientific_name, values_from = mean_count_total, values_fill = 0) %>%
+  as.data.frame()
+
+# Make SampleID rows and remove from community matrix
+rownames(Community_Matrix) <- Community_Matrix$SampleID
+
+# Creating MetaData
+MetaData <- data.frame(SampleID = rownames(Community_Matrix)) %>%
+  separate(SampleID, into = c("reef_name","Year"), sep = "_", remove = FALSE)
+
+# Removing SampleID to only have abundance data
+Community_Matrix <- Community_Matrix[,-1]
+
+# Calculate Bray-Curtis dissimilarity (Abundnace) & Jaccard (Presence or Absence)
+bray_curtis_dist <- vegdist(Community_Matrix, method = "bray")
+bray_curtis_dist
+
+jaccard_index <- vegdist(Community_Matrix,method = "jaccard")
+jaccard_index
+
+# Calculating Permanova Loop
+site_shifts <- list()
+for (s in unique(MetaData$reef_name)) {
+  Sub_Meta <- filter(MetaData, reef_name == s)
+  # Subset Community Matrix for specific reef
+  if (nrow(Sub_Meta) == 2) {
+    Sub_ComMatrix <- Community_Matrix[rownames(Community_Matrix) %in% Sub_Meta$SampleID,]
+ # Calculate Bray-Curtis dissimilarity (Abundnace) & Jaccard (Presence or Absence) for reef pair
+    bray_curtis_dist_reef <- as.vector(as.numeric(vegdist(Sub_ComMatrix, method = "bray")))
+    jaccard_index_reef    <- as.vector(as.numeric(vegdist(Sub_ComMatrix, method = "jaccard")))
+site_shifts[[s]] <- data.frame(
+      Reef = s,
+      Bray_Curtis_Distance = bray_curtis_dist_reef,
+      Jaccard_Distance = jaccard_index_reef)
+  }
+}
+# Output Table of Bray-Curtis & Jaccard
+Permanova_results <- bind_rows(site_shifts)
+Permanova_results
+
+
+# Creating plot to examine differences between reefs
+## For Bray-Curtis
+
+# Conduct PCoA on Bray-Curtis
+PCoA_Bray <- cmdscale(bray_curtis_dist, k = 2, eig = TRUE)
+
+# Extract coordinates and variance explained
+Points_Bray <- data.frame(
+  PCoA1 = PCoA_Bray$points[, 1],
+  PCoA2 = PCoA_Bray$points[, 2],
+  Reef  = MetaData$reef_name,
+  Year  = MetaData$Year)
+bray_axis1_pct <- round(100 * PCoA_Bray$eig[1] / sum(PCoA_Bray$eig), 1)
+bray_axis2_pct <- round(100 * PCoA_Bray$eig[2] / sum(PCoA_Bray$eig), 1)
+
+
+# Plot
+plot_bray <- ggplot(Points_Bray, aes(x = PCoA1, y = PCoA2, color = Reef)) +
+  geom_point(aes(shape = Year), size = 3) +
+  labs(
+    title = "PCoA Analysis (Bray-Curtis)",
+    x = paste0("PCoA1 (", bray_axis1_pct, "%)"),
+    y = paste0("PCoA2 (", bray_axis2_pct, "%)")
+  ) +
+  theme_classic() +
+  theme(legend.position = "right")
+plot_bray
+```
+```{r w/ biobox in the plot}
+# Looking at Shifts in Beta Diversity for each Site Between 2025 & 2026 using Bray-Curtis dissimilarity matrix & Jaccard and PERMANOVA
+
+# Examining Shifts in each Reef
+
+# Creating a Pip to look at changes b/t reefs in 2025 & 2026
+Standardized_Site_Year_biobox <- MobileFauna %>%
+  mutate(Year = as.factor(year(mdy(date))),
+         biobox_number = replace_na(biobox_number,1)) %>%
+  filter(Year %in% c("2025","2026")) %>%
+  group_by(Year, scientific_name, reef_name, biobox_number) %>%
+  summarise(
+    mean_count_total = mean(count_total, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(SampleID = paste(reef_name,Year,sep = "_"))
+
+# Need to create a community matrix 
+Community_Matrix_boiobox <- Standardized_Site_Year_biobox %>%
+  select(SampleID, scientific_name, mean_count_total, biobox_number) %>%
+  unite("site_rep", SampleID, biobox_number, sep = "_") %>% 
+  pivot_wider(names_from = scientific_name, values_from = mean_count_total, values_fill = 0) %>%
+  as.data.frame()
+
+# Make SampleID rows and remove from community matrix
+rownames(Community_Matrix_boiobox) <- Community_Matrix_boiobox$site_rep
+
+
+# Creating MetaData
+MetaData_biobox <- data.frame(site_rep = rownames(Community_Matrix_boiobox)) %>%
+  separate(site_rep, into = c("reef_name","Year","Biobox"), sep = "_", remove = FALSE)
+
+# Removing SampleID to only have abundance data
+Community_Matrix_boiobox <- Community_Matrix_boiobox[,-1]
+
+# Calculate Bray-Curtis dissimilarity (Abundance) & Jaccard (Presence or Absence)
+bray_curtis_dist_biobox <- vegdist(Community_Matrix_boiobox, method = "bray")
+bray_curtis_dist_biobox
+
+jaccard_index_biobox <- vegdist(Community_Matrix_boiobox,method = "jaccard")
+jaccard_index_biobox
+
+# Calculating Permanova Loop
+#site_shifts_biobox <- list()
+#for (s in unique(MetaData_biobox$reef_name)) {
+ # Sub_Meta_biobox <- filter(MetaData_biobox, reef_name == s)
+  # Subset Community Matrix for specific reef
+ # if (nrow(Sub_Meta) == 2) {
+   # Sub_ComMatrix_biobox <- Community_Matrix_boiobox[rownames(Community_Matrix_boiobox) %in% Sub_Meta_biobox$site_rep,]
+ # Calculate Bray-Curtis dissimilarity (Abundnace) & Jaccard (Presence or Absence) for reef pair
+  #  bray_curtis_dist_reef_biobox <- as.vector(as.numeric(vegdist(Sub_ComMatrix_biobox, method = "bray")))
+ #   jaccard_index_reef_biobox <- as.vector(as.numeric(vegdist(Sub_ComMatrix_biobox, method = "jaccard")))
+#site_shifts_biobox[[s]] <- data.frame(
+     # Reef = s,
+     # Bray_Curtis_Distance = bray_curtis_dist_reef_biobox,
+     # Jaccard_Distance = jaccard_index_reef_biobox)
+  }
+}
+
+# Output Table of Bray-Curtis & Jaccard
+#Permanova_results_biobox <- bind_rows(site_shifts_biobox)
+#Permanova_results_biobox
+
+# Creating plot to examine differences between reefs
+## For Bray-Curtis
+
+
+# Conduct PCoA on Bray-Curtis
+PCoA_Bray_biobox <- cmdscale(bray_curtis_dist_biobox, k = 2, eig = TRUE)
+
+# Extract coordinates and variance explained
+Points_Bray_biobox <- data.frame(
+  PCoA1 = PCoA_Bray_biobox$points[, 1],
+  PCoA2 = PCoA_Bray_biobox$points[, 2],
+  Reef  = MetaData_biobox$reef_name,
+  Year  = MetaData_biobox$Year,
+  Biobox = MetaData_biobox$Biobox)
+bray_axis1_pct_biobox <- round(100 * PCoA_Bray_biobox$eig[1] / sum(PCoA_Bray_biobox$eig), 1)
+bray_axis2_pct_biobox <- round(100 * PCoA_Bray_biobox$eig[2] / sum(PCoA_Bray_biobox$eig), 1)
+
+
+# Plot
+plot_bray_biobox <- ggplot(Points_Bray_biobox, aes(x = PCoA1, y = PCoA2, color = Reef)) +
+  geom_point(aes(shape = Year), size = 3) +
+  labs(
+    title = "PCoA Analysis (Bray-Curtis)",
+    x = paste0("PCoA1 (", bray_axis1_pct_biobox, "%)"),
+    y = paste0("PCoA2 (", bray_axis2_pct_biobox, "%)")
+  ) +
+  theme_classic() +
+  theme(legend.position = "right")
+plot_bray_biobox
+
+
+#Permanova
+adonis2(bray_curtis_dist_biobox ~ reef_name, data = MetaData_biobox, permutations = 999)
+adonis2(bray_curtis_dist_biobox ~ site_rep, data = MetaData_biobox, permutations = 999)
 ```
 
