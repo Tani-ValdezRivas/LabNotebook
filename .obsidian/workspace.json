@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes to myself/Chapter Ideas.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Chapter Ideas"
+              "title": "README"
             }
           }
         ]
@@ -186,18 +186,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "d8ede5a79e40dd1c",
+  "active": "64750b8d1fa2e894",
   "lastOpenFiles": [
+    "Meeting Notes/Conversation with Brenden and Lindsey.md",
+    "Meeting Notes/Conservation with Lindsey pt 2.md",
+    "Meeting Notes/Conservation with Lindsey.md",
+    "Admin Stuff/Mentoring Agreement/Grad/GradMentoringAgreement-template.pdf",
+    "Admin Stuff/Mentoring Agreement/Grad/GradMentoringAgreement-template.md",
+    "Admin Stuff/Intake Form/GW-Intake-Form.pdf",
     "Notes to myself/How to Visualize my Potential Project.md",
     "Notes to myself/Perkinsus.md",
     "Notes to myself/Chapter Ideas.md",
-    "Admin Stuff/Intake Form/GW-Intake-Form.pdf",
-    "Admin Stuff/Mentoring Agreement/Grad/GradMentoringAgreement-template.md",
-    "Admin Stuff/Mentoring Agreement/Grad/GradMentoringAgreement-template.pdf",
     "Admin Stuff/Packing Protocol for BioBox.md",
-    "Meeting Notes/Conservation with Lindsey.md",
-    "Meeting Notes/Conservation with Lindsey pt 2.md",
-    "Meeting Notes/Conversation with Brenden and Lindsey.md",
     "Meeting Notes/July 22 - July 29 2026.md",
     "How to do lab work/RNALater.md",
     "How to do lab work/Perkinsus.md",
